@@ -1,5 +1,4 @@
-import { config } from 'dotenv';
-config();
+require('dotenv').config();
 import axios from 'axios';
 import { screenStocks } from './helpers/screen-stocks';
 import { generateSignal3 } from './helpers/generate-signal';
