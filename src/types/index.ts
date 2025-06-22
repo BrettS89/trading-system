@@ -20,4 +20,28 @@ export type Tick = {
   symbol: string;
   price: number;
   timestamp: string;
+  high: number;
+  low: number;
+  volume: number;
 }
+
+export type AppBar = {
+  symbol: string;
+  price: number;
+  timestamp: string;
+  high: number;
+  low: number;
+}
+
+export type Bar = {
+  c: number;
+  h: number;
+  l: number;
+  n: number;
+  o: number;
+  t: string;
+  v: number;
+  vw: number;
+}
+
+export type BarData = Record<string, Bar[]>

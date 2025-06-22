@@ -4,7 +4,7 @@ import { screenStocks } from './helpers/screen-stocks';
 import { generateSignal3 } from './helpers/generate-signal';
 import { simulateTrade } from './helpers/trade';
 import { Trade, Portfolio } from './types';
-import { SMA, RSI } from 'technicalindicators';
+import { SMA } from 'technicalindicators';
 
 const ALPACA_API_KEY = process.env.ALPACA_API_KEY!;
 const ALPACA_API_SECRET = process.env.ALPACA_API_SECRET!;

@@ -1,8 +1,8 @@
 import { Portfolio, Trade } from '../types';
 
-export function simulateTrade(portfolio: Portfolio, signal: Trade, totalCash: number, setTotalCash: (cash: number) => void, stopLossPct: number, takeProfitPct: number): Portfolio {
+export function simulateTrade(portfolio: Portfolio, signal: Trade, totalCash: number, setTotalCash: (cash: number) => void, stopLossPct: number, takeProfitPct: number, startingCash: number): Portfolio {
   const updatedPortfolio = { ...portfolio };
-  const maxTradeSize = totalCash * 0.02;
+  const maxTradeSize = startingCash * 0.25;
 
   let quantity = 0;
 
@@ -14,25 +14,33 @@ export function simulateTrade(portfolio: Portfolio, signal: Trade, totalCash: nu
       setTotalCash(totalCash - quantity * signal.price);
       updatedPortfolio.shares += quantity;
       updatedPortfolio.avgEntryPrice = updatedPortfolio.shares > 0 ? totalCost / updatedPortfolio.shares : 0;
+      // console.log(updatedPortfolio.avgEntryPrice);
     }
   } else if (signal.action === 'sell' && portfolio.shares > 0) {
     quantity = portfolio.shares; // Sell all shares
     setTotalCash(totalCash + quantity * signal.price);
     updatedPortfolio.shares = 0;
     updatedPortfolio.avgEntryPrice = 0; // Reset entry price
-  }
-
-  // Check stop-loss or take-profit
+  } else {
+// Check stop-loss or take-profit
   if (portfolio.shares > 0) {
-    const entryPrice = updatedPortfolio.avgEntryPrice; // Use average entry price
-    const stopLossPrice = entryPrice * (1 - stopLossPct);
-    const takeProfitPrice = entryPrice * (1 + takeProfitPct);
+    // console.log(updatedPortfolio);
+
+  const entryPrice = updatedPortfolio.avgEntryPrice; // Use average entry price
+  const stopLossPrice = entryPrice * (1 - stopLossPct);
+  const takeProfitPrice = entryPrice * (1 + takeProfitPct);
     if (signal.price <= stopLossPrice || signal.price >= takeProfitPrice) {
+      if (signal.price >= takeProfitPrice) {
+        // console.log(signal.price, takeProfitPrice);
+      }
       setTotalCash(totalCash + portfolio.shares * signal.price);
       updatedPortfolio.shares = 0;
       updatedPortfolio.avgEntryPrice = 0;
     }
   }
+  }
+
+  
 
   updatedPortfolio.value = updatedPortfolio.shares * signal.price;
   
