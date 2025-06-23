@@ -2,7 +2,7 @@ import { Portfolio, Trade } from '../types';
 
 export function simulateTrade(portfolio: Portfolio, signal: Trade, totalCash: number, setTotalCash: (cash: number) => void, stopLossPct: number, takeProfitPct: number, startingCash: number): Portfolio {
   const updatedPortfolio = { ...portfolio };
-  const maxTradeSize = startingCash * 0.3;
+  const maxTradeSize = startingCash * 0.33;
 
   let quantity = 0;
 
@@ -15,6 +15,8 @@ export function simulateTrade(portfolio: Portfolio, signal: Trade, totalCash: nu
       updatedPortfolio.shares += quantity;
       updatedPortfolio.avgEntryPrice = updatedPortfolio.shares > 0 ? totalCost / updatedPortfolio.shares : 0;
       // console.log(updatedPortfolio.avgEntryPrice);
+    } else {
+      // console.log('not enough cash');
     }
   } else if (signal.action === 'sell' && portfolio.shares > 0) {
     quantity = portfolio.shares; // Sell all shares

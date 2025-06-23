@@ -63,12 +63,12 @@ export function generateSignal(
   const latestRSI = rsiValues[rsiValues.length - 1];
 
   // Buy condition: Short EMA crosses above long EMA and ADX > threshold
-  if (prevShortEMA <= prevLongEMA && latestShortEMA > latestLongEMA && latestRSI > 70) {
+  if (prevShortEMA <= prevLongEMA && latestShortEMA > latestLongEMA && latestRSI > 69) {
     // console.log(latestRSI)
     return { action: 'buy', price: currentPrice, quantity: 0, timestamp: new Date().toISOString(), symbol };
   }
   // Sell condition: Short EMA crosses below long EMA and ADX > threshold
-  else if (prevShortEMA >= prevLongEMA && latestShortEMA < latestLongEMA && latestRSI < 30) {
+  else if (prevShortEMA >= prevLongEMA && latestShortEMA < latestLongEMA && latestRSI < 29) {
     return { action: 'sell', price: currentPrice, quantity: 0, timestamp: new Date().toISOString(), symbol };
   }
   // Default to hold if conditions aren’t met
