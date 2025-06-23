@@ -1,4 +1,3 @@
-import { screenStocks } from './helpers/screen-stocks';
 import { generateSignal } from './helpers/generate-signal';
 import { simulateTrade } from './helpers/trade';
 import { calculateDailyReturn } from './helpers/misc';
@@ -23,8 +22,8 @@ type TradingDayProps = {
 export class TradingDay {
   private isBackTest?: boolean;
 
-  readonly shortSMAPeriod = 31; // 5-minute SMA
-  readonly longSMAPeriod = 101; // 10-minute SMA (revert from 20)
+  readonly shortSMAPeriod = 5; // 5-minute SMA
+  readonly longSMAPeriod = 20; // 10-minute SMA (revert from 20)
   readonly stopLossPct = 0.016; // 0.75% (test vs. 0.005)
   readonly takeProfitPct = 0.05;
 
@@ -38,6 +37,7 @@ export class TradingDay {
   private highHistories: { [symbol: string]: number[] } = {};
   private lowHistories: { [symbol: string]: number[] } = {};
   private lastPriceTime: { [symbol: string]: number } = {};
+  private volume: { [symbol: string]: number[] } = {};
 
   private trades: Trade[] = [];
 
@@ -67,6 +67,7 @@ export class TradingDay {
       this.priceHistories[symbol] = [];
       this.highHistories[symbol] = [];
       this.lowHistories[symbol] = [];
+      this.volume[symbol] = [];
       this.lastPriceTime[symbol] = Date.now();
     });
 
@@ -77,7 +78,7 @@ export class TradingDay {
     return this.selectedStocks;
   }
 
-  processTick({ price, symbol, timestamp, low, high }: Tick) {
+  processTick({ price, symbol, timestamp, low, high, volume }: Tick) {
     if (!this.priceHistories[symbol]) {
       console.warn(`Unknown symbol: ${symbol}.`);
       return;
@@ -96,10 +97,16 @@ export class TradingDay {
           this.highHistories[symbol],
           this.lowHistories[symbol],
           this.priceHistories[symbol],
+          this.volume[symbol],
           this.shortSMAPeriod,
           this.longSMAPeriod,
           14,
           25,
+          14,
+          7,
+          1.3,
+          this.stopLossPct,
+          this.takeProfitPct,
           symbol,
           price,
         );
@@ -136,6 +143,7 @@ export class TradingDay {
       this.lowHistories[symbol].push(low);
       this.highHistories[symbol].push(high);
       this.lastPriceTime[symbol] = currentTime;
+      this.volume[symbol].push(volume);
     }
   }
 
