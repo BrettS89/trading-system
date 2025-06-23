@@ -2,7 +2,7 @@ import { Portfolio, Trade } from '../types';
 
 export function simulateTrade(portfolio: Portfolio, signal: Trade, totalCash: number, setTotalCash: (cash: number) => void, stopLossPct: number, takeProfitPct: number, startingCash: number): Portfolio {
   const updatedPortfolio = { ...portfolio };
-  const maxTradeSize = startingCash * 0.25;
+  const maxTradeSize = startingCash * 0.3;
 
   let quantity = 0;
 

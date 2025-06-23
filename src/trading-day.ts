@@ -23,10 +23,10 @@ type TradingDayProps = {
 export class TradingDay {
   private isBackTest?: boolean;
 
-  readonly shortSMAPeriod = 31; // 5-minute SMA
-  readonly longSMAPeriod = 101; // 10-minute SMA (revert from 20)
-  readonly stopLossPct = 0.016; // 0.75% (test vs. 0.005)
-  readonly takeProfitPct = 0.05;
+  readonly shortSMAPeriod = 5; // 5-minute SMA
+  readonly longSMAPeriod = 20; // 10-minute SMA (revert from 20)
+  readonly stopLossPct = 0.005 // 0.75% (test vs. 0.005)
+  readonly takeProfitPct = 0.02;
 
   private cash: number;
   private accountValue: number;

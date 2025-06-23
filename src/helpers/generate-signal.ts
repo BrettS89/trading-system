@@ -1,5 +1,5 @@
 import { ADX } from 'technicalindicators';
-import { EMA } from 'technicalindicators'; // For EMA calculation
+import { EMA, RSI } from 'technicalindicators'; // For EMA calculation
 
 // Define the Trade type (adjust as needed)
 interface Trade {
@@ -42,11 +42,13 @@ export function generateSignal(
   const longEMA = calculateEMA(closePrices, longPeriod);
 
   // Calculate ADX
-  const adxInput = { high: highPrices, low: lowPrices, close: closePrices, period: adxPeriod };
-  const adxValues = ADX.calculate(adxInput);
+  // const adxInput = { high: highPrices, low: lowPrices, close: closePrices, period: adxPeriod };
+  // const adxValues = ADX.calculate(adxInput);
+
+  const rsiValues = RSI.calculate({ period: 9, values: closePrices });
 
   // Check if there’s enough data for signal generation
-  if (shortEMA.length < 2 || longEMA.length < 2 || adxValues.length < 1) {
+  if (shortEMA.length < 2 || longEMA.length < 2) {
     return { action: 'hold', price: currentPrice, quantity: 0, timestamp: new Date().toISOString(), symbol };
   }
 
@@ -57,14 +59,16 @@ export function generateSignal(
   const latestLongEMA = longEMA[longEMA.length - 1];
 
   // Get the latest ADX value
-  const latestADX = adxValues[adxValues.length - 1].adx;
+  // const latestADX = adxValues[adxValues.length - 1].adx;
+  const latestRSI = rsiValues[rsiValues.length - 1];
 
   // Buy condition: Short EMA crosses above long EMA and ADX > threshold
-  if (prevShortEMA <= prevLongEMA && latestShortEMA > latestLongEMA && latestADX > adxThreshold) {
+  if (prevShortEMA <= prevLongEMA && latestShortEMA > latestLongEMA && latestRSI > 70) {
+    // console.log(latestRSI)
     return { action: 'buy', price: currentPrice, quantity: 0, timestamp: new Date().toISOString(), symbol };
   }
   // Sell condition: Short EMA crosses below long EMA and ADX > threshold
-  else if (prevShortEMA >= prevLongEMA && latestShortEMA < latestLongEMA && latestADX > adxThreshold) {
+  else if (prevShortEMA >= prevLongEMA && latestShortEMA < latestLongEMA && latestRSI < 30) {
     return { action: 'sell', price: currentPrice, quantity: 0, timestamp: new Date().toISOString(), symbol };
   }
   // Default to hold if conditions aren’t met
